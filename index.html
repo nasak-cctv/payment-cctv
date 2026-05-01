@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ระบบชำระค่าบริการกล้องวงจรปิด</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --btn-gradient: linear-gradient(to right, #11998e, #38ef7d);
+    }
+
+    * { box-sizing: border-box; }
+
+    body { 
+      font-family: 'Sarabun', sans-serif; 
+      background: var(--primary-gradient);
+      margin: 0; 
+      padding: 10px;
+      display: flex; 
+      justify-content: center; 
+      align-items: flex-start; /* ให้ชิดขอบบนเล็กน้อยตามรูปภาพ */
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+    }
+
+    .card { 
+      background: rgba(255, 255, 255, 0.98); 
+      padding: 40px 20px; 
+      border-radius: 25px; 
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3); 
+      width: 100%; /* เต็มจอสำหรับมือถือ */
+      max-width: 600px; /* คุมความกว้างในคอม */
+      margin-top: 20px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 { 
+      color: #222; 
+      text-align: center; 
+      margin-top: 0;
+      font-size: 2rem; /* ใหญ่พิเศษ */
+      line-height: 1.2;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+
+    label { 
+      font-weight: 700; 
+      color: #444; 
+      display: block; 
+      margin-bottom: 15px; 
+      font-size: 1.5rem; /* ใหญ่พิเศษ */
+    }
+
+    select { 
+      width: 100%; 
+      padding: 22px; 
+      border-radius: 15px; 
+      border: 3px solid #764ba2; 
+      font-size: 1.4rem; /* ใหญ่พิเศษ */
+      outline: none; 
+      margin-bottom: 30px; 
+      background-color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      color: #333;
+    }
+
+    .loader-container {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loader {
+      border: 10px solid #f3f3f3;
+      border-top: 10px solid #764ba2;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .link-container { display: none; margin-top: 10px; }
+
+    .list-header {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #28a745;
+      text-align: center;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .btn-payment { 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--btn-gradient);
+      color: white; 
+      text-decoration: none; 
+      padding: 28px; /* ปุ่มใหญ่มากเพื่อให้กดง่ายที่สุด */
+      border-radius: 20px; 
+      margin-bottom: 20px; 
+      font-size: 1.7rem; /* ตัวหนังสือในปุ่มใหญ่พิเศษ */
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      transition: all 0.2s;
+    }
+
+    .btn-payment:active { transform: scale(0.95); filter: brightness(0.9); }
+
+    .btn-payment b {
+      background: rgba(0,0,0,0.15);
+      padding: 4px 15px;
+      border-radius: 10px;
+      margin-left: 15px;
+    }
+
+    /* ปรับแต่งหน้าจอเล็กพิเศษ */
+    @media (max-width: 400px) {
+      h2 { font-size: 1.6rem; }
+      .btn-payment { font-size: 1.4rem; padding: 22px; }
+      label { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>💰 ชำระค่าบริการกล้อง <br>อบต.นาสัก</h2>
+  
+  <label>📍 เลือกหมู่บ้าน :</label>
+  <select id="village" onchange="handleSelection()">
+    <option value="">-- แตะเพื่อเลือก --</option>
+    <option value="v1">ม.1 บ้านแม่จาง</option>
+    <option value="v2">ม.2 บ้านป๋างป๋วย</option>
+    <option value="v3">ม.3 บ้านวังน้ำต้อง</option>
+    <option value="v4">ม.4 บ้านนาสัก</option>
+    <option value="v5">ม.5 บ้านใหม่รัตนโกสินทร์</option>
+    <option value="v6">ม.6 บ้านสบจาง</option>
+    <option value="v7">ม.7 บ้านแม่หล่วง</option>
+    <option value="v8">ม.8 บ้านข่วงม่วง</option>
+    <option value="v9">ม.9 บ้านทุ่งเลางาม</option>
+  </select>
+
+  <div id="loader" class="loader-container">
+    <div class="loader"></div>
+    <p style="color: #764ba2; font-weight: bold; margin-top: 15px; font-size: 1.4rem;">กำลังโหลดข้อมูล...</p>
+  </div>
+
+  <div id="linkContainer" class="link-container">
+    <span class="list-header">รายการจ่ายเงินกล้อง :</span>
+    <div id="buttons"></div>
+  </div>
+</div>
+
+<script>
+// ข้อมูล URL ทั้งหมดของคุณ
+const data = {
+  v1: ["https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405203", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405310", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405039", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404206"],
+  v2: ["https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405609", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404875", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405237", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404842"],
+  v3: ["https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404867", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404859", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404404", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405302"],
+  v4: ["https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404891", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404214", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405583", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405575"],
+  v5: ["https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405245", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404933", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405450", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404925"],
+  v6: ["https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404388", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404909", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405294", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404396"],
+  v7: ["https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405328", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404370", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405336", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405286"],
+  v8: ["https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405252", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405344", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404222", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405260"],
+  v9: ["https://globalh5.crosssim.com/Index/dataplan/i/89852000280010405567", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404883", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404248", "https://globalh5.crosssim.com/Index/dataplan/i/89852000280010404198"]
+};
+
+function handleSelection() {
+  const select = document.getElementById("village");
+  const container = document.getElementById("linkContainer");
+  const loader = document.getElementById("loader");
+  const buttonsDiv = document.getElementById("buttons");
+  const selectedValue = select.value;
+
+  container.style.display = "none";
+  
+  if (selectedValue) {
+    loader.style.display = "block";
+
+    setTimeout(() => {
+      loader.style.display = "none";
+      const urls = data[selectedValue];
+      buttonsDiv.innerHTML = "";
+      
+      urls.forEach((url, index) => {
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.className = "btn-payment";
+        a.innerHTML = "จ่ายเงินกล้อง <b>ตัวที่ " + (index + 1) + "</b>";
+        buttonsDiv.appendChild(a);
+      });
+      
+      container.style.display = "block";
+    }, 1000);
+  } else {
+    loader.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
